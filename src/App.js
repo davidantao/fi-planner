@@ -33,26 +33,49 @@ function calculateGrowth({
   const coastTarget = fireTarget / Math.pow(1 + CAGR, retirementAge - age);
 
   let year = 0;
-  let balance = currentSavings;
+
+  // Separate balances for each FI strategy
+  let fireBalance = currentSavings;
+  let semiFiBalance = currentSavings;
+  let coastFiBalance = currentSavings;
+
   const fireData = [];
   const semiFiData = [];
   const coastFiData = [];
+
   let coastAchieved = false;
+  let fireFinishedAt = undefined;
+  let semiFiFinishedAt = undefined;
 
   while (year < 100) {
-    fireData.push({ year: age + year, balance });
-    semiFiData.push({ year: age + year, balance });
-    coastFiData.push({ year: age + year, balance });
+    fireData.push({ year: age + year, balance: fireBalance });
+    semiFiData.push({ year: age + year, balance: semiFiBalance });
+    coastFiData.push({ year: age + year, balance: coastFiBalance });
 
-    if (!coastAchieved && balance >= coastTarget) coastAchieved = year;
-    if (balance >= fireTarget && !fireData.finishedAt) fireData.finishedAt = year;
-    if (balance >= semiFiTarget && !semiFiData.finishedAt) semiFiData.finishedAt = year;
+    if (!coastAchieved && coastFiBalance >= coastTarget) coastAchieved = year;
+    if (fireFinishedAt === undefined && fireBalance >= fireTarget) fireFinishedAt = year;
+    if (semiFiFinishedAt === undefined && semiFiBalance >= semiFiTarget) semiFiFinishedAt = year;
 
-    if (fireData.finishedAt && semiFiData.finishedAt && coastAchieved !== false) break;
+    // Stop if all targets met
+    if (fireFinishedAt !== undefined && semiFiFinishedAt !== undefined && coastAchieved !== false) break;
 
-    balance = (balance + annualContribution) * (1 + CAGR);
+    // Update balances for next year
+    fireBalance = (fireBalance + annualContribution) * (1 + CAGR);
+
+// For SemiFI, only add contributions if semiFiBalance < semiFiTarget
+if (semiFiBalance < semiFiTarget) {
+  semiFiBalance = (semiFiBalance + annualContribution) * (1 + CAGR);
+} else {
+  semiFiBalance = semiFiBalance * (1 + CAGR);
+}
+
+coastFiBalance = coastFiBalance * (1 + CAGR); 
     year++;
   }
+
+  // Attach finishedAt info for use outside if needed
+  fireData.finishedAt = fireFinishedAt;
+  semiFiData.finishedAt = semiFiFinishedAt;
 
   return {
     fireData,
@@ -100,7 +123,7 @@ function App() {
   const handleDownload = () => {
     const chart = document.getElementById('chart-container');
     if (!chart) return;
-  
+
     toPng(chart)
       .then((dataUrl) => {
         download(dataUrl, 'fi-chart.png');
