@@ -193,7 +193,7 @@ function App() {
         <h3 style={{ marginTop: '2rem' }}>🎯 Targets (inflation-adjusted)</h3>
         <p><strong>FIRE Target:</strong> ${fireTarget.toLocaleString()}</p>
         <p><strong>Semi-FI Target:</strong> ${semiFiTarget.toLocaleString()}</p>
-        <p><strong>Coast FI Target:</strong> ${coastTarget.toLocaleString()} (will grow to FIRE by age {inputs.retirementAge})</p>
+        <p><strong>Coast FI Target:</strong> ${coastTarget.toLocaleString()}</p>
 
         <h3 style={{ marginTop: '2rem' }}>📅 Estimated Achievement</h3>
         <p><strong>Full FI Achieved by:</strong> {fireData.finishedAt !== undefined ? inputs.age + fireData.finishedAt : 'Not within projection window'}</p>
