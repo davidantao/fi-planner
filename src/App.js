@@ -182,7 +182,7 @@ function App() {
       <div style={{ marginTop: '2rem' }}>
         <h3>💡 Definitions</h3>
         <p><strong>FIRE (Financial Independence, Retire Early):</strong> Enough savings to fully cover your expenses indefinitely, allowing complete freedom from needing to work.</p>
-        <p><strong>Semi-FI:</strong> Partial financial independence where your investments cover a significant portion, 60% of your expenses, giving you flexibility to reduce work or pursue passion projects.</p>
+        <p><strong>Semi-FI:</strong> Partial financial independence where your investments cover 60% of your expenses, giving you flexibility to reduce work or pursue passion projects.</p>
         <p><strong>Coast FI:</strong> The point where you've saved enough that, even without further contributions, your investments will grow to your FIRE goal by your retirement age.</p>
 
         <h3 style={{ marginTop: '2rem' }}>🎯 Targets</h3>
