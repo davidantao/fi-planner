@@ -21,16 +21,19 @@ function calculateGrowth({
   currentSavings,
   age,
   returnRate,
-  retirementAge
+  retirementAge,
+  inflationRate
 }) {
   const CAGR = returnRate / 100;
-  const FIRE_MULTIPLIER = 25;
-  const SEMIFI_MULTIPLIER = 15;
+  const INFLATION = inflationRate / 100;
+  const realCAGR = ((1 + CAGR) / (1 + INFLATION)) - 1;
 
+  const FIRE_HORIZON = 90 - retirementAge;
   const annualContribution = income * (savingsRate / 100);
-  const fireTarget = expenses * FIRE_MULTIPLIER;
-  const semiFiTarget = expenses * SEMIFI_MULTIPLIER;
-  const coastTarget = fireTarget / Math.pow(1 + CAGR, retirementAge - age);
+
+  const fireTarget = expenses * ((1 - Math.pow(1 + realCAGR, -FIRE_HORIZON)) / realCAGR);
+  const semiFiTarget = 0.6 * expenses * ((1 - Math.pow(1 + realCAGR, -FIRE_HORIZON)) / realCAGR);
+  const coastTarget = fireTarget / Math.pow(1 + realCAGR, retirementAge - age);
 
   let year = 0;
   let fireBalance = currentSavings;
@@ -56,15 +59,15 @@ function calculateGrowth({
 
     if (fireFinishedAt !== undefined && semiFiFinishedAt !== undefined && coastAchieved !== false) break;
 
-    fireBalance = (fireBalance + annualContribution) * (1 + CAGR);
+    fireBalance = (fireBalance + annualContribution) * (1 + realCAGR);
 
     if (semiFiBalance < semiFiTarget) {
-      semiFiBalance = (semiFiBalance + annualContribution) * (1 + CAGR);
+      semiFiBalance = (semiFiBalance + annualContribution) * (1 + realCAGR);
     } else {
-      semiFiBalance = semiFiBalance * (1 + CAGR);
+      semiFiBalance = semiFiBalance * (1 + realCAGR);
     }
 
-    coastFiBalance = coastFiBalance * (1 + CAGR);
+    coastFiBalance = coastFiBalance * (1 + realCAGR);
     year++;
   }
 
@@ -90,7 +93,8 @@ function App() {
     currentSavings: 10000,
     age: 25,
     returnRate: 7,
-    retirementAge: 65
+    retirementAge: 65,
+    inflationRate: 2 // %
   });
 
   const handleSliderChange = (field) => (_, value) => {
@@ -134,13 +138,14 @@ function App() {
     { label: 'Current Portfolio', field: 'currentSavings', min: 0, max: 1000000, step: 1000 },
     { label: 'Age', field: 'age', min: 18, max: 70, step: 1 },
     { label: 'Return Rate (%)', field: 'returnRate', min: 1, max: 15, step: 0.1 },
-    { label: 'Retirement Age', field: 'retirementAge', min: 40, max: 75, step: 1 }
+    { label: 'Retirement Age', field: 'retirementAge', min: 40, max: 75, step: 1 },
+    { label: 'Inflation Rate (%)', field: 'inflationRate', min: 0, max: 10, step: 0.1 }
   ];
 
   return (
     <div style={{ padding: '2rem', maxWidth: 900, margin: 'auto' }}>
       <h1>📈 FI Planner</h1>
-      <p>Estimate your path to FIRE, Semi-FI, or Coast FI</p>
+      <p>Estimate your path to FIRE, Semi-FI, or Coast FI (inflation-adjusted)</p>
 
       <div style={{ marginBottom: '2rem' }}>
         {sliders.map(({ label, field, min, max, step }) => (
@@ -181,11 +186,11 @@ function App() {
 
       <div style={{ marginTop: '2rem' }}>
         <h3>💡 Definitions</h3>
-        <p><strong>FIRE (Financial Independence, Retire Early):</strong> Enough savings to fully cover your expenses indefinitely, allowing complete freedom from needing to work.</p>
-        <p><strong>Semi-FI:</strong> Partial financial independence where your investments cover 60% of your expenses, giving you flexibility to reduce work or pursue passion projects.</p>
-        <p><strong>Coast FI:</strong> The point where you've saved enough that, even without further contributions, your investments will grow to your FIRE goal by your retirement age.</p>
+        <p><strong>FIRE (Financial Independence, Retire Early):</strong> Enough savings to fully cover your expenses during retirement, adjusted for inflation, assuming you live to age 90.</p>
+        <p><strong>Semi-FI:</strong> Partial financial independence where your investments cover 60% of your inflation-adjusted expenses in retirement.</p>
+        <p><strong>Coast FI:</strong> The point where you've saved enough that, even without further contributions, your investments will grow to your inflation-adjusted FIRE goal by your retirement age.</p>
 
-        <h3 style={{ marginTop: '2rem' }}>🎯 Targets</h3>
+        <h3 style={{ marginTop: '2rem' }}>🎯 Targets (inflation-adjusted)</h3>
         <p><strong>FIRE Target:</strong> ${fireTarget.toLocaleString()}</p>
         <p><strong>Semi-FI Target:</strong> ${semiFiTarget.toLocaleString()}</p>
         <p><strong>Coast FI Target:</strong> ${coastTarget.toLocaleString()} (will grow to FIRE by age {inputs.retirementAge})</p>
@@ -193,7 +198,7 @@ function App() {
         <h3 style={{ marginTop: '2rem' }}>📅 Estimated Achievement</h3>
         <p><strong>Full FI Achieved by:</strong> {fireData.finishedAt !== undefined ? inputs.age + fireData.finishedAt : 'Not within projection window'}</p>
         <p><strong>Semi-FI Achieved by:</strong> {semiFiData.finishedAt !== undefined ? inputs.age + semiFiData.finishedAt : 'Not within projection window'}</p>
-        <p><strong>Coast FI Achieved by:</strong> {coastYear ? coastYear : 'Not within projection window'}</p>
+        <p><strong>Coast FI Achieved by:</strong> {coastYear !== null ? coastYear : 'Not within projection window'}</p>
       </div>
     </div>
   );
