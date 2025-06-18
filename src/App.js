@@ -67,7 +67,11 @@ function calculateGrowth({
       semiFiBalance = semiFiBalance * (1 + realCAGR);
     }
 
-    coastFiBalance = coastFiBalance * (1 + realCAGR);
+    if (!coastAchieved) {
+      coastFiBalance = (coastFiBalance + annualContribution) * (1 + realCAGR);
+    } else {
+      coastFiBalance = coastFiBalance * (1 + realCAGR);
+    }
     year++;
   }
 
