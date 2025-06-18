@@ -134,10 +134,10 @@ function App() {
   };
 
   const sliders = [
-    { label: 'Income', field: 'income', min: 0, max: 300000, step: 1000 },
+    { label: 'Post-Tax Income', field: 'income', min: 0, max: 300000, step: 1000 },
     { label: 'Savings Rate (%)', field: 'savingsRate', min: 0, max: 100, step: 1 },
     { label: 'Expenses', field: 'expenses', min: 0, max: 200000, step: 1000 },
-    { label: 'Current Savings', field: 'currentSavings', min: 0, max: 1000000, step: 1000 },
+    { label: 'Current Portfolio Valuation', field: 'currentSavings', min: 0, max: 1000000, step: 1000 },
     { label: 'Age', field: 'age', min: 18, max: 70, step: 1 },
     { label: 'Return Rate (%)', field: 'returnRate', min: 1, max: 15, step: 0.1 },
     { label: 'Retirement Age', field: 'retirementAge', min: 40, max: 75, step: 1 }
