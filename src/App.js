@@ -33,8 +33,6 @@ function calculateGrowth({
   const coastTarget = fireTarget / Math.pow(1 + CAGR, retirementAge - age);
 
   let year = 0;
-
-  // Separate balances for each FI strategy
   let fireBalance = currentSavings;
   let semiFiBalance = currentSavings;
   let coastFiBalance = currentSavings;
@@ -56,24 +54,20 @@ function calculateGrowth({
     if (fireFinishedAt === undefined && fireBalance >= fireTarget) fireFinishedAt = year;
     if (semiFiFinishedAt === undefined && semiFiBalance >= semiFiTarget) semiFiFinishedAt = year;
 
-    // Stop if all targets met
     if (fireFinishedAt !== undefined && semiFiFinishedAt !== undefined && coastAchieved !== false) break;
 
-    // Update balances for next year
     fireBalance = (fireBalance + annualContribution) * (1 + CAGR);
 
-// For SemiFI, only add contributions if semiFiBalance < semiFiTarget
-if (semiFiBalance < semiFiTarget) {
-  semiFiBalance = (semiFiBalance + annualContribution) * (1 + CAGR);
-} else {
-  semiFiBalance = semiFiBalance * (1 + CAGR);
-}
+    if (semiFiBalance < semiFiTarget) {
+      semiFiBalance = (semiFiBalance + annualContribution) * (1 + CAGR);
+    } else {
+      semiFiBalance = semiFiBalance * (1 + CAGR);
+    }
 
-coastFiBalance = coastFiBalance * (1 + CAGR); 
+    coastFiBalance = coastFiBalance * (1 + CAGR);
     year++;
   }
 
-  // Attach finishedAt info for use outside if needed
   fireData.finishedAt = fireFinishedAt;
   semiFiData.finishedAt = semiFiFinishedAt;
 
@@ -136,8 +130,8 @@ function App() {
   const sliders = [
     { label: 'Post-Tax Income', field: 'income', min: 0, max: 300000, step: 1000 },
     { label: 'Savings Rate (%)', field: 'savingsRate', min: 0, max: 100, step: 1 },
-    { label: 'Expenses', field: 'expenses', min: 0, max: 200000, step: 1000 },
-    { label: 'Current Portfolio Valuation', field: 'currentSavings', min: 0, max: 1000000, step: 1000 },
+    { label: 'Annual Expenses', field: 'expenses', min: 0, max: 200000, step: 1000 },
+    { label: 'Current Portfolio', field: 'currentSavings', min: 0, max: 1000000, step: 1000 },
     { label: 'Age', field: 'age', min: 18, max: 70, step: 1 },
     { label: 'Return Rate (%)', field: 'returnRate', min: 1, max: 15, step: 0.1 },
     { label: 'Retirement Age', field: 'retirementAge', min: 40, max: 75, step: 1 }
@@ -186,13 +180,20 @@ function App() {
       </Button>
 
       <div style={{ marginTop: '2rem' }}>
-        <h3>Targets</h3>
-        <ul>
-          <li>🔥 FIRE Target: ${fireTarget.toLocaleString()}</li>
-          <li>💼 Semi-FI Target: ${semiFiTarget.toLocaleString()}</li>
-          <li>🌴 Coast FI Target: ${coastTarget.toLocaleString()} (grow to FIRE by age {inputs.retirementAge})</li>
-        </ul>
-        <p>🌅 Coast FI Achieved by: {coastYear ? coastYear : 'Not within projection window'}</p>
+        <h3>💡 Definitions</h3>
+        <p><strong>FIRE (Financial Independence, Retire Early):</strong> Enough savings to fully cover your expenses indefinitely, allowing complete freedom from needing to work.</p>
+        <p><strong>Semi-FI:</strong> Partial financial independence where your investments cover a significant portion of your expenses, giving you flexibility to reduce work or pursue passion projects.</p>
+        <p><strong>Coast FI:</strong> The point where you've saved enough that, even without further contributions, your investments will grow to your FIRE goal by your retirement age.</p>
+
+        <h3 style={{ marginTop: '2rem' }}>🎯 Targets</h3>
+        <p><strong>FIRE Target:</strong> ${fireTarget.toLocaleString()}</p>
+        <p><strong>Semi-FI Target:</strong> ${semiFiTarget.toLocaleString()}</p>
+        <p><strong>Coast FI Target:</strong> ${coastTarget.toLocaleString()} (will grow to FIRE by age {inputs.retirementAge})</p>
+
+        <h3 style={{ marginTop: '2rem' }}>📅 Estimated Achievement</h3>
+        <p><strong>Full FI Achieved by:</strong> {fireData.finishedAt !== undefined ? inputs.age + fireData.finishedAt : 'Not within projection window'}</p>
+        <p><strong>Semi-FI Achieved by:</strong> {semiFiData.finishedAt !== undefined ? inputs.age + semiFiData.finishedAt : 'Not within projection window'}</p>
+        <p><strong>Coast FI Achieved by:</strong> {coastYear ? coastYear : 'Not within projection window'}</p>
       </div>
     </div>
   );
