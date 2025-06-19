@@ -199,8 +199,8 @@ function App() {
         <p><strong>FIRE (Financial Independence, Retire Early):</strong> Enough savings to fully cover your expenses during retirement, adjusted for inflation, assuming you live to age 90.</p>
         <p><strong>Semi-FI:</strong> Partial financial independence where your investments cover 60% of your inflation-adjusted expenses in retirement.</p>
         <p><strong>Coast FI:</strong> The point where you've saved enough that, even without further contributions, your investments will grow to your inflation-adjusted FIRE goal by your retirement age.</p>
-        <p><strong>Cash Cushion:</strong> A 5-year reserve of cash to avoid selling from your portfolio during a stock market downturn. The median time for stock markets to recover from crashes is two years - recovery from the 2008 market crash took five: the cash cushion should be enough to weather any storm. Formula: <code>(expenses − (expenses × yield shield rate) × 5)</code></p>
-        <p><strong>Yield Shield:</strong> An early-retirement strategy where you temporarily shift your portfolio toward high-yielding assets to avoid selling investments. The goal is to have an overall portfolio yield of 4%. This is only recommended for the first 5 years of retirement to protect against market downtowns, crashes, and recessions.</p>
+        <p><strong>Cash Cushion:</strong> A 5-year cash reserve to help you avoid selling your investments when the market is down. Most crashes recover in 2 years, but some take longer — like in 2008. This cushion helps you ride out even the worst economic downturns. Formula: <code>(expenses − (expenses × yield shield rate) × 5)</code></p>
+        <p><strong>Yield Shield:</strong> An early-retirement strategy where you temporarily shift your portfolio toward high-yielding assets to avoid selling investments, ideally yielding 4%. This is only recommended for the first 5 years of retirement.</p>
 
         <h3 style={{ marginTop: '2rem' }}>🎯 Targets (inflation-adjusted)</h3>
         <p><strong>FIRE Target:</strong> ${fireTarget.toLocaleString()}</p>
