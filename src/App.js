@@ -1,4 +1,3 @@
-// App.js
 import React, { useState } from 'react';
 import {
   LineChart,
@@ -30,13 +29,14 @@ function calculateGrowth({
 
   const FIRE_HORIZON = 90 - retirementAge;
   const annualContribution = income * (savingsRate / 100);
+  const yieldShieldRate = 0.04;
 
-  const fireTarget = expenses * ((1 - Math.pow(1 + realCAGR, -FIRE_HORIZON)) / realCAGR);
+  const fireTargetBase = expenses * ((1 - Math.pow(1 + realCAGR, -FIRE_HORIZON)) / realCAGR);
   const semiFiTarget = 0.6 * expenses * ((1 - Math.pow(1 + realCAGR, -FIRE_HORIZON)) / realCAGR);
-  const coastTarget = fireTarget / Math.pow(1 + realCAGR, retirementAge - age);
+  const coastTarget = fireTargetBase / Math.pow(1 + realCAGR, retirementAge - age);
 
-  const yieldShieldRate = 0.04; // 4% assumed yield
-  const cashCushionTarget = (expenses - (fireTarget * yieldShieldRate)) * 5;
+  const cashCushionTarget = (expenses - (semiFiTarget * yieldShieldRate)) * 5;
+  const fireTarget = fireTargetBase + cashCushionTarget;
 
   let year = 0;
   let fireBalance = currentSavings;
@@ -75,6 +75,7 @@ function calculateGrowth({
     } else {
       coastFiBalance = coastFiBalance * (1 + realCAGR);
     }
+
     year++;
   }
 
@@ -89,8 +90,8 @@ function calculateGrowth({
     semiFiTarget,
     coastTarget,
     coastYear: coastAchieved !== false ? age + coastAchieved : null,
-    yieldShieldRate,
-    cashCushionTarget
+    cashCushionTarget,
+    fireTargetBase
   };
 }
 
@@ -115,6 +116,7 @@ function App() {
     semiFiData,
     coastFiData,
     fireTarget,
+    fireTargetBase,
     semiFiTarget,
     coastTarget,
     coastYear,
@@ -196,20 +198,27 @@ function App() {
 
       <div style={{ marginTop: '2rem' }}>
         <h3>💡 Definitions</h3>
-        <p><strong>FIRE (Financial Independence, Retire Early):</strong> Enough savings to fully cover your expenses during retirement, adjusted for inflation, assuming you live to age 90.</p>
-        <p><strong>Semi-FI:</strong> Partial financial independence where your investments cover 60% of your inflation-adjusted expenses in retirement.</p>
-        <p><strong>Coast FI:</strong> The point where you've saved enough that, even without further contributions, your investments will grow to your inflation-adjusted FIRE goal by your retirement age.</p>
+        <p><strong>FIRE (Financial Independence, Retire Early):</strong> Enough savings to fully cover your expenses in retirement. Now includes a 5-year cash cushion for market downturns.</p>
+        <p><strong>Semi-FI:</strong> When your portfolio can cover 60% of retirement expenses.</p>
+        <p><strong>Coast FI:</strong> When you've saved enough that your portfolio will grow to full FIRE by retirement, even without more contributions.</p>
         <p><strong>Cash Cushion:</strong> A 5-year cash reserve to help you avoid selling your investments when the market is down. Most crashes recover in 2 years, but some take longer — like in 2008. This cushion helps you ride out even the worst economic downturns. Formula: <code>(expenses − (expenses × yield shield rate) × 5)</code></p>
         <p><strong>Yield Shield:</strong> An early-retirement strategy where you temporarily shift your portfolio toward high-yielding assets to avoid selling investments, ideally yielding 4%. This is only recommended for the first 5 years of retirement.</p>
 
         <h3 style={{ marginTop: '2rem' }}>🎯 Targets (inflation-adjusted)</h3>
-        <p><strong>FIRE Target:</strong> ${fireTarget.toLocaleString()}</p>
+        <p><strong>FIRE Target (incl. cash cushion):</strong> ${fireTarget.toLocaleString()}</p>
+        <p><strong>FIRE Target (portfolio only):</strong> ${fireTargetBase.toLocaleString()}</p>
         <p><strong>Semi-FI Target:</strong> ${semiFiTarget.toLocaleString()}</p>
         <p><strong>Coast FI Target:</strong> ${coastTarget.toLocaleString()}</p>
-        <p><strong>Cash Cushion (5 years):</strong> ${cashCushionTarget.toLocaleString()}</p>
+        <p><strong>Cash Cushion:</strong> ${cashCushionTarget.toLocaleString()}</p>
 
         <h3 style={{ marginTop: '2rem' }}>📅 Estimated Achievement</h3>
-        <p><strong>Full FI Achieved by:</strong> {fireData.finishedAt !== undefined ? inputs.age + fireData.finishedAt : 'Not within projection window'}</p>
+        <p><strong>Full FI with Cash Cushion Achieved by:</strong> {fireData.finishedAt !== undefined ? inputs.age + fireData.finishedAt : 'Not within projection window'}</p>
+        <p><strong>Full FI Portfolio Only Achieved by:</strong> {
+    (() => {
+      const baseOnlyYear = fireData.find(d => d.balance >= fireTargetBase)?.year;
+      return baseOnlyYear ? baseOnlyYear : 'Not within projection window';
+    })()
+  }</p>
         <p><strong>Semi-FI Achieved by:</strong> {semiFiData.finishedAt !== undefined ? inputs.age + semiFiData.finishedAt : 'Not within projection window'}</p>
         <p><strong>Coast FI Achieved by:</strong> {coastYear !== null ? coastYear : 'Not within projection window'}</p>
       </div>
