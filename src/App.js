@@ -221,6 +221,11 @@ function App() {
   }</p>
         <p><strong>Semi-FI Achieved by:</strong> {semiFiData.finishedAt !== undefined ? inputs.age + semiFiData.finishedAt : 'Not within projection window'}</p>
         <p><strong>Coast FI Achieved by:</strong> {coastYear !== null ? coastYear : 'Not within projection window'}</p>
+      
+        <h3 style={{ marginTop: '2rem' }}>🧠 Good-To-Know's</h3>
+        <p><strong>What is a realistic rate of return?: </strong>For the S&P-500, 95%+ of all 20-year rolling periods delivered <strong>7%</strong>  or more annually.</p>
+        <p><strong>What adjustments can I make?: </strong>Increasing your savings rate dramatically increases your compounding potential and chances of retiring early.</p>
+        <p><strong>How do I compare to others?: </strong>Less than 3% of Americans retire by 50 — most work until 62 or later. The average US life expectancy is 77 - retiring early gives you extra years, potentially decades to enjoy life on your own terms.</p>
       </div>
     </div>
   );
