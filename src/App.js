@@ -243,6 +243,13 @@ function App() {
         <Button variant="contained" onClick={handleDownload}>📥 Download Chart as PNG</Button>
 
       <div style={{ marginTop: '2rem' }}>
+        <h3>💡 Definitions</h3>
+        <p><strong>FIRE (Financial Independence, Retire Early):</strong> Enough savings to fully cover your expenses in retirement. Now includes a 5-year cash cushion for market downturns.</p>
+        <p><strong>Semi-FI:</strong> When your portfolio can cover 60% of retirement expenses.</p>
+        <p><strong>Coast FI:</strong> When you've saved enough that your portfolio will grow to full FIRE by retirement, even without more contributions.</p>
+        <p><strong>Cash Cushion:</strong> A 5-year cash reserve to help you avoid selling your investments when the market is down. Most crashes recover in 2 years, but some take longer — like in 2008. This cushion helps you ride out even the worst economic downturns. Formula: <code>(expenses − (portfolio × yield shield rate) × 5)</code></p>
+        <p><strong>Yield Shield:</strong> An early-retirement strategy where you temporarily shift your portfolio toward high-yielding assets to avoid selling investments, ideally yielding 4%. This is only recommended for the first 5 years of retirement.</p>
+
         <h3>🎯 Targets (inflation-adjusted)</h3>
         <p><strong>FIRE Target (with cushion):</strong> ${fireTarget.toLocaleString()}</p>
         <p><strong>FIRE Target (portfolio only):</strong> ${fireTargetBase.toLocaleString()}</p>
