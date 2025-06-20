@@ -112,7 +112,7 @@ function App() {
     inflationRate: 2
   };
   const [inputs, setInputs] = useState(defaultInputs);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
 
   const theme = useMemo(() =>
     createTheme({
